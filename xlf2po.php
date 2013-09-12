@@ -56,7 +56,7 @@ Cette page convertit un fichier XLF au format PO.
   <select name="destLocale">
 <?php
 foreach ($GLOBALS['l10ntools']['destLocales'] as $locale)
-	echo "<option>$locale</option>";
+	echo "<option value=$locale>$locale</option>";
 ?>
   </select><br><br>
   <label>Fichier XLF :</label><br>
