@@ -11,26 +11,24 @@ if (array_key_exists('xlfFile', $_FILES)
 
 	if (move_uploaded_file($_FILES['xlfFile']['tmp_name'], $uploadFile))
 	{
-		require_once($GLOBALS['l10ntools']['pophpPath'] . 'POFile.php');
-
+		// Declare filenames
 		$output = $GLOBALS['l10ntools']['uploadDir'] . $destLocale . '.po';
 		$tempXlf = $GLOBALS['l10ntools']['uploadDir'] . $destLocale . '.temp.xlf';
 
+		// Convert the file
 		chdir($GLOBALS['l10ntools']['l10nScriptsPath']);
 		exec("php lb2xliff.php $uploadFile en-GB $tempXlf $destLocale");
 
-		system("xliff2po $tempXlf $output", $res);
-		var_dump($res);
+		exec("xliff2po $tempXlf $output");
 		unlink($tempXlf);
 
 		exec("msguniq $output --no-location --no-wrap --sort-output -o $output");
 
-		$file = new POFile($output);
+		// Prompt file download
 		header("Content-Type: application/octet-stream");
-		header("Content-disposition: attachment; filename=lang.po");
+		header("Content-disposition: attachment; filename=" . pathinfo($output, PATHINFO_BASENAME));
 
-		foreach ($file->getEntries() as $entry)
-		    echo $entry;
+		readfile($output);
 
 		//unlink($output);
 		unlink($uploadFile);
@@ -45,7 +43,7 @@ if (array_key_exists('xlfFile', $_FILES)
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>XLIFF to PO Converter</title>
+	<title>XLF => PO</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -56,11 +54,10 @@ Cette page convertit un fichier XLF au format PO.
 <form enctype="multipart/form-data" action="" method="post">
 	<label>Langue destination :</label><br>
   <select name="destLocale">
-  	<option>fr-FR</option>
-  	<option>de-DE</option>
-  	<option>es-ES</option>
-  	<option>it-IT</option>
-  	<option>ja-JP</option>
+<?php
+foreach ($GLOBALS['l10ntools']['destLocales'] as $locale)
+	echo "<option>$locale</option>";
+?>
   </select><br><br>
   <label>Fichier XLF :</label><br>
   <input name="xlfFile" type="file"><br><br>
