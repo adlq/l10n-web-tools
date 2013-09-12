@@ -19,7 +19,7 @@ if (array_key_exists('xlfFile', $_FILES)
 		chdir($GLOBALS['l10ntools']['l10nScriptsPath']);
 		exec("php lb2xliff.php $uploadFile en-GB $tempXlf $destLocale");
 
-		exec("xliff2po $tempXlf $output");
+		exec("xliff2po -i $tempXlf -o $output");
 		unlink($tempXlf);
 
 		exec("msguniq $output --no-location --no-wrap --sort-output -o $output");
