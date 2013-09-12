@@ -1,9 +1,3 @@
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>Post Process Zanata</title>
-	<link rel="stylesheet" href="style.css">
-</head>
 <?php
 set_time_limit(0);
 require_once("conf.php");
@@ -24,8 +18,11 @@ if (array_key_exists('poFile', $_FILES) && in_array(pathinfo($_FILES['poFile']['
 
 		foreach ($file->getEntries() as $entry)
 		{
+			if ($entry->getSource() !== '')
+			{
 		    $newEntry = new POEntry(stripslashes($entry->getSource()), stripslashes($entry->getTarget()));
 		    echo $newEntry;
+			}
 		}
 
 		unlink($uploadFile);
@@ -37,6 +34,12 @@ if (array_key_exists('poFile', $_FILES) && in_array(pathinfo($_FILES['poFile']['
 }
 
 ?>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Post Process Zanata</title>
+	<link rel="stylesheet" href="style.css">
+</head>
 <body>
 <h1>Post-traitement Zanata</h1>
 <div id=explanation>
